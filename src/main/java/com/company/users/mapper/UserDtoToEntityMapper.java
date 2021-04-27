@@ -27,6 +27,7 @@ public class UserDtoToEntityMapper {
 
     public User mapEntityToDto(UserEntity userEntity){
         User user = new User();
+        user.setId(userEntity.getId());
         user.setTitle(userEntity.getTitle());
         user.setFirstname(userEntity.getFirstname());
         user.setLastname(userEntity.getLastname());

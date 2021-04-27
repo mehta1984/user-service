@@ -1,12 +1,12 @@
 package com.company.users.service;
 
-import com.company.users.dto.Address;
 import com.company.users.dto.User;
 import com.company.users.entity.UserEntity;
 import com.company.users.exception.UserNotFoundException;
 import com.company.users.logging.annotation.LogEntryExit;
 import com.company.users.mapper.UserDtoToEntityMapper;
 import com.company.users.repository.UserRepository;
+//import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
@@ -48,18 +48,17 @@ public class UserService {
 
     @Transactional
     @LogEntryExit(showArgs = true, showResult = true, unit = ChronoUnit.MILLIS)
+    //@CircuitBreaker(name = findById, fallbackMethod = "getDefaultUser")
     public User findById(Long id) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-        //UserEntity userEntity =userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("findById");
         UserEntity userEntity = (UserEntity) circuitBreaker.run(() -> userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)), throwable -> getDefaultUser());
-
+        //UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         User user = userDtoToEntityMapper.mapEntityToDto(userEntity);
 
         return user;
     }
 
-    private UserEntity getDefaultUser() {
+    public UserEntity getDefaultUser(/*Long id,UserNotFoundException userNotFoundException*/) {
         UserEntity userEntity = new UserEntity();
         userEntity.setTitle("DEFAULT");
         userEntity.setFirstname("FirstName");
@@ -72,6 +71,8 @@ public class UserService {
         userEntity.setState("State");
         userEntity.setPostcode("postcode");
         userEntity.setId(1L);
+        //User user = userDtoToEntityMapper.mapEntityToDto(userEntity);
+
         return userEntity;
 
     }
