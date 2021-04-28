@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+/**
+ * Aspect logging for entry and exit of the method.
+ */
 @Aspect
 @Component
 public class LogEntryExitAspect {

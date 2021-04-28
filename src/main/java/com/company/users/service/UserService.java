@@ -6,10 +6,8 @@ import com.company.users.exception.UserNotFoundException;
 import com.company.users.logging.annotation.LogEntryExit;
 import com.company.users.mapper.UserDtoToEntityMapper;
 import com.company.users.repository.UserRepository;
-//import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,9 +16,7 @@ import java.time.temporal.ChronoUnit;
 
 @Service
 public class UserService {
-
-    @Autowired
-    private CircuitBreakerFactory circuitBreakerFactory;
+    private final String findById = "findById";
 
     @Autowired
     UserRepository userRepository;
@@ -48,36 +44,38 @@ public class UserService {
 
     @Transactional
     @LogEntryExit(showArgs = true, showResult = true, unit = ChronoUnit.MILLIS)
-    //@CircuitBreaker(name = findById, fallbackMethod = "getDefaultUser")
-    public User findById(Long id) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("findById");
-        UserEntity userEntity = (UserEntity) circuitBreaker.run(() -> userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)), throwable -> getDefaultUser());
-        //UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    @CircuitBreaker(name = findById, fallbackMethod = "getDefaultUser")
+    public User findById1(Long id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         User user = userDtoToEntityMapper.mapEntityToDto(userEntity);
-
         return user;
     }
 
-    public UserEntity getDefaultUser(/*Long id,UserNotFoundException userNotFoundException*/) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setTitle("DEFAULT");
-        userEntity.setFirstname("FirstName");
-        userEntity.setLastname("LastName");
-        userEntity.setGender("Male");
-        userEntity.setEmpid(2332L);
+    /**
+     * Fallback method
+     *
+     * @return
+     */
+    public User getDefaultUser(Long id, java.lang.Throwable throwable) throws Throwable {
+        if (throwable instanceof UserNotFoundException) {
+            throw throwable; //This is to throw legitimate business errror
+        } else { // Below is alternative data return on circuit open
+            UserEntity userEntity = new UserEntity();
+            userEntity.setTitle("DEFAULT");
+            userEntity.setFirstname("FirstName");
+            userEntity.setLastname("LastName");
+            userEntity.setGender("Male");
+            userEntity.setEmpid(2332L);
 
-        userEntity.setCity("sydney");
-        userEntity.setStreet("Street");
-        userEntity.setState("State");
-        userEntity.setPostcode("postcode");
-        userEntity.setId(1L);
-        //User user = userDtoToEntityMapper.mapEntityToDto(userEntity);
+            userEntity.setCity("sydney");
+            userEntity.setStreet("Street");
+            userEntity.setState("State");
+            userEntity.setPostcode("postcode");
+            userEntity.setId(1L);
+            User user = userDtoToEntityMapper.mapEntityToDto(userEntity);
 
-        return userEntity;
+            return user;
+        }
 
     }
-
-    //Implement this
-    //https://www.baeldung.com/spring-cloud-netflix-hystrix
-    //https://www.baeldung.com/spring-cloud-circuit-breaker
 }

@@ -1,0 +1,85 @@
+{
+    "provider": {
+        "name": "test_provider"
+    },
+    "consumer": {
+        "name": "test_consumer"
+    },
+    "interactions": [
+        {
+            "description": "GET USER Request",
+            "request": {
+                "method": "GET",
+                "path": "/users/1",
+                "headers": {
+                    "Authorization": "Basic Z3Vlc3Q6Z3Vlc3QxMjM0"
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "address": {
+                        "city": "Sydney",
+                        "postcode": "2167",
+                        "state": "NSW",
+                        "street": "georgeSt"
+                    },
+                    "empid": 233,
+                    "firstname": "user1",
+                    "gender": "male",
+                    "id": 1,
+                    "lastname": "lastname",
+                    "title": "mr"
+                }
+            },
+            "providerStates": [
+                {
+                    "name": "test GET"
+                }
+            ]
+        },
+        {
+            "description": "POST REQUEST",
+            "request": {
+                "method": "POST",
+                "path": "/users",
+                "headers": {
+                    "Content-Type": "application/json",
+                    "Authorization": "Basic YWRtaW46YWRtaW4xMjM0"
+                },
+                "body": {
+                    "address": {
+                        "city": "sydney",
+                        "postcode": "postcode",
+                        "state": "State",
+                        "street": "Street"
+                    },
+                    "empid": 2332,
+                    "firstname": "FirstName",
+                    "gender": "Male",
+                    "lastname": "LastName",
+                    "title": "DEFAULT"
+                }
+            },
+            "response": {
+                "status": 200
+            },
+            "providerStates": [
+                {
+                    "name": "test POST"
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "pact-specification": {
+            "version": "3.0.0"
+        },
+        "pact-jvm": {
+            "version": "3.5.0"
+        }
+    }
+}

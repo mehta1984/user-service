@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * REST Controller to expose REST endpoints
+ */
 @RestController
 public class UserController {
 
@@ -24,7 +27,7 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     ResponseEntity<?>  getUser(@PathVariable @NotBlank @Validated Long id) {
-        User user = userService.findById(id);
+        User user = userService.findById1(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -33,8 +36,5 @@ public class UserController {
         user = userService.updateUser(user,id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
-    //https://dev.to/kreuzwerker/writing-contract-tests-with-pact-in-spring-boot-62l
-    //https://reflectoring.io/consumer-driven-contract-provider-pact-spring/
 
 }

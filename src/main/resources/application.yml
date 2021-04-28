@@ -18,8 +18,8 @@ resilience4j.circuitbreaker:
     findById:
       slidingWindowSize: 1
       waitDurationInOpenState: 10000
-#      ignoreExceptions:
-#        - com.company.users.exception.UserNotFoundException
-#      recordExceptions:
-#        - java.net.SocketTimeoutException
-#        - java.net.ConnectException
+      ignoreExceptions:
+        - com.company.users.exception.UserNotFoundException
+      recordExceptions:
+        - java.net.SocketTimeoutException
+        - java.net.ConnectException

@@ -63,6 +63,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.jeasy</groupId>
+			<artifactId>easy-random-core</artifactId>
+			<version>5.0.0</version>
+			<!--<type>pom</type>-->
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -75,16 +82,15 @@
 
 		<dependency>
 			<groupId>au.com.dius</groupId>
-			<artifactId>pact-jvm-consumer-junit_2.11</artifactId>
-			<version>3.5.0</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>au.com.dius</groupId>
 			<artifactId>pact-jvm-provider-junit_2.11</artifactId>
 			<version>3.5.0</version>
-			<scope>test</scope>
+			<!--<scope>test</scope>-->
+		</dependency>
+		<dependency>
+			<groupId>au.com.dius</groupId>
+			<artifactId>pact-jvm-consumer-junit_2.11</artifactId>
+			<version>3.5.0</version>
+			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>
@@ -94,6 +100,15 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<pact.rootDir>target/mypacts</pact.rootDir>
+					</systemPropertyVariables>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
